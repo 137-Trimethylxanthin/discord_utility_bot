@@ -74,6 +74,7 @@ impl EventHandler for Handler {
                 commands::mute::register(),
                 commands::unmute::register(),
                 commands::check::register(),
+                commands::linus_timer::register(),
             ])
             .await;
 
@@ -113,6 +114,7 @@ impl EventHandler for Handler {
                 "mute" => Some(commands::mute::run(&ctx, &command).await.unwrap()),
                 "unmute" => Some(commands::unmute::run(&ctx, &command).await.unwrap()),
                 "check" => Some(commands::check::run(&ctx, &command).await.unwrap()),
+                "linus_timer" => Some(commands::linus_timer::run(&ctx, &command).await.unwrap()),
                 _ => Some("not implemented :(".to_string()),
             };
 
@@ -168,6 +170,7 @@ async fn main() {
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
     let intents = GatewayIntents::GUILDS | GatewayIntents::GUILD_VOICE_STATES;
     // Build our client.
+    println!("Starting client");
     let mut client = Client::builder(token, intents)
         .event_handler(Handler {
             bot_id: Arc::new(AtomicU64::new(0)),
@@ -176,7 +179,6 @@ async fn main() {
         .type_map_insert::<HttpKey>(HttpClient::new())
         .await
         .expect("Error creating client");
-
     // Finally, start a single shard, and start listening to events.
     //
     // Shards will automatically attempt to reconnect, and will perform exponential backoff until
